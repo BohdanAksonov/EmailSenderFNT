@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
+import EmailSender from '../views/EmailSender.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/email-sender',
+    name: 'EmailSender',
+    component: EmailSender
   },
   // {
   //   path: '/about',
