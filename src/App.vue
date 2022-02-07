@@ -16,6 +16,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Drawer from "@/components/Drawer.vue";
+import store from "@/store/index";
 
 export default defineComponent({
   name: "App",

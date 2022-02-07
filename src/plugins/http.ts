@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
 const http = axios.create({
-    baseURL: "https://localhost:44377/api/v1"
+  baseURL: process.env.VUE_APP_BASE_API_URL
 });
 
 export default http;
