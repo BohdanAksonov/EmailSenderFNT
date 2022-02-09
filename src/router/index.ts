@@ -1,11 +1,17 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import EmailSender from '../views/EmailSender.vue'
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import EmailSender from "../views/EmailSender.vue";
+import TemplateMapper from "@/views/TemplateMapper.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/email-sender',
-    name: 'EmailSender',
-    component: EmailSender
+    path: "/email-sender",
+    name: "EmailSender",
+    component: EmailSender,
+  },
+  {
+    path: "/template-mapper",
+    name: "TemplateMapper",
+    component: TemplateMapper,
   },
   // {
   //   path: '/about',
@@ -15,11 +21,11 @@ const routes: Array<RouteRecordRaw> = [
   //   // which is lazy-loaded when the route is visited.
   //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   // }
-]
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

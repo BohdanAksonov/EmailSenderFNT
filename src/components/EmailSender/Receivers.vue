@@ -29,7 +29,7 @@
           <v-btn
             :disabled="receiversFiles.length !== 1"
             right
-            @click="readFile(fileType.receiver)"
+            @click="readFile()"
             variant="contained"
             color="success"
             >Read Receivers</v-btn
@@ -78,60 +78,89 @@
           </div>
         </v-card-text>
       </v-card>
+
+      <file-options
+        :fileOptionsDialog="fileOptionsDialog"
+        @closeFileOptionsDialog="closeFileOptionsDialogEvent($event)"
+      />
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import FileType from "@/enum/FileTypes";
 import store from "@/store";
 import ReceiverModel from "@/models/ReceiverModel";
+import FileOptions from "./FileOptions.vue";
 
 export default defineComponent({
   name: "Receivers",
+  components: {
+    FileOptions,
+  },
 
   data() {
     return {
       elevation: 15,
       receiversFiles: new Array<File>(),
-      fileType: FileType,
       cardTitle: "Receivers",
+      fileOptionsDialog: false,
+      delimiter: "",
+      endFileChars: ["\r", ""],
     };
   },
 
   methods: {
-    readFile(filetype: FileType) {
+    readFile() {
       if (this.receiversFiles.length !== 1) {
         alert("No File Chosen");
+      }
+
+      if (this.delimiter === "") {
+        this.fileOptionsDialog = true;
       } else {
         var reader = new FileReader();
-
         reader.readAsText(this.receiversFiles[0]);
-
         reader.onload = (e) => {
           if (store.getters.getReceivers.length > 0) {
             store.dispatch("addReceivers", new Array<ReceiverModel>());
           }
-
           var readerResult = reader.result as string;
           var lines = readerResult.split(/[\n]+/);
-
           var receivers = new Array<ReceiverModel>();
-
           lines.forEach((element) => {
-            var items = element.split(";");
+            var items = element.split(this.delimiter);
+
             if (items.length === 2) {
               var receiver = new ReceiverModel(
                 items[0].trim(),
                 items[1].trim()
               );
               receivers.push(receiver);
+            } else if (
+              items.length === 1 &&
+              this.endFileChars.includes(items[0])
+            ) {
+              return;
+            } else {
+              alert("Wrong delimiter or file.");
+              this.delimiter = "";
+
+              throw new Error("Wrong delimiter or file.");
             }
           });
-
           store.dispatch("addReceivers", receivers);
         };
+      }
+    },
+
+    closeFileOptionsDialogEvent(value: string) {
+      this.fileOptionsDialog = false;
+      if (value !== undefined && value !== "") {
+        this.delimiter = value;
+        this.readFile();
+      } else {
+        alert("Wrong delimiter");
       }
     },
 
@@ -161,6 +190,8 @@ export default defineComponent({
     receiversFiles(value: Array<File>) {
       if (value.length === 0) {
         store.dispatch("addReceivers", new Array<ReceiverModel>());
+        this.delimiter = "";
+        store.dispatch("updateShowReceivers", !store.getters.getShowReceivers);
       }
     },
   },
