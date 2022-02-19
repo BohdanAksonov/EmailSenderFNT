@@ -1,41 +1,41 @@
 <template>
   <v-row justify="center" align="center" class="ma-5">
     <v-col lg="9" md="9" sm="12">
-  <v-card :elevation="elevation">
-    <v-card-title>{{ cardTitle }}</v-card-title>
-    <v-card-text>
-      <v-file-input
-        show-size
-        small-chips
-        label="Select file with template"
-        density="default"
-        v-model="templateFiles"
-        accept=".htm"
-        color="info"
-        prepend-icon="mdi-camera"
-      ></v-file-input>
-    </v-card-text>
-    <v-card-actions class="justify-end">
-      <v-btn
-        :disabled="isPreviewButtonDisable"
-        right
-        variant="contained"
-        color="secondary"
-        @click="previewButtonClick()"
-        >Preview</v-btn
-      >
+      <v-card :elevation="elevation">
+        <v-card-title>{{ cardTitle }}</v-card-title>
+        <v-card-text>
+          <v-file-input
+            show-size
+            small-chips
+            label="Select file with template"
+            density="default"
+            v-model="templateFiles"
+            accept=".htm"
+            color="info"
+            prepend-icon="mdi-camera"
+          ></v-file-input>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            :disabled="isPreviewButtonDisable"
+            right
+            variant="contained"
+            color="secondary"
+            @click="previewButtonClick()"
+            >Preview</v-btn
+          >
 
-      <v-btn
-        :disabled="templateFiles.length !== 1"
-        right
-        @click="readFile(fileType.template)"
-        variant="contained"
-        color="success"
-        >Read template</v-btn
-      >
-    </v-card-actions>
-  </v-card>
-  </v-col>
+          <v-btn
+            :disabled="templateFiles.length !== 1"
+            right
+            @click="readFile(fileType.template)"
+            variant="contained"
+            color="success"
+            >Read template</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-col>
   </v-row>
   <v-row
     justify="center"
@@ -44,27 +44,34 @@
     v-show="showTemplateContent"
   >
     <v-col lg="9" md="9" sm="12">
-  <v-card :elevation="elevation">
-    <v-card-title color="primary"
-      >Preview
-      <v-spacer></v-spacer>
-      <v-btn
-        variant="text"
-        icon
-        size="x-small"
-        @click="previewButtonClick()"
-      >
-        <v-icon>mdi-window-close</v-icon>
-      </v-btn>
-    </v-card-title>
-    <v-card-text class="overflow-x-auto overflow-y-auto" style="height: 300px">
-      <div class="templatePreview" v-if="showTemplateContent" v-html="templateContent"></div>
-      <div v-else>
-        <h1>Something went wrong!</h1>
-      </div>
-    </v-card-text>
-  </v-card>
-  </v-col></v-row 
+      <v-card :elevation="elevation">
+        <v-card-title color="primary"
+          >Preview
+          <v-spacer></v-spacer>
+          <v-btn
+            variant="text"
+            icon
+            size="x-small"
+            @click="previewButtonClick()"
+          >
+            <v-icon>mdi-window-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text
+          class="overflow-x-auto overflow-y-auto"
+          style="height: 300px"
+        >
+          <div
+            class="templatePreview"
+            v-if="showTemplateContent"
+            v-html="templateContent"
+          ></div>
+          <div v-else>
+            <h1>Something went wrong!</h1>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col></v-row
   >
 </template>
 
@@ -116,6 +123,10 @@ export default defineComponent({
     templateFiles(value: Array<File>) {
       if (value.length === 0) {
         store.dispatch("addTemplate", "");
+        store.dispatch(
+          "updateShowTemplateContent",
+          !store.getters.getShowTemplateContent
+        );
       }
     },
   },
