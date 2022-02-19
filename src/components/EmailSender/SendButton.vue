@@ -7,7 +7,7 @@
           variant="outlined"
           color="primary"
           :disabled="isSendButtonDisable"
-          @click="send()"
+          @click="credentialsDialog = true"
           >Send</v-btn
         >
       </div>
@@ -20,6 +20,10 @@
       </div>
     </v-col>
   </v-row>
+  <credentials
+    :credentialsDialog="credentialsDialog"
+    @closeCredentialsDialog="closeCredentialsDialogEvent($event)"
+  />
 </template>
 
 <script lang="ts">
@@ -28,24 +32,36 @@ import SendEmailPayloadModel from "@/models/SendEmailPayloadModel";
 import http from "@/plugins/http";
 import store from "@/store";
 import ReceiverModel from "@/models/ReceiverModel";
+import Credentials from "@/components/EmailSender/Credentials.vue";
+import CredentialDialogModel from "@/models/CredentialDialogModel";
+import CryptoHelper from "@/helpers/cryptoHelper";
 
 export default defineComponent({
   name: "SendButton",
-
+  components: {
+    Credentials,
+  },
   data() {
     return {
       sentToApi: false,
+      credentialsDialog: false,
     };
   },
 
   methods: {
-    send() {
-      this.sentToApi = true;
+    closeCredentialsDialogEvent(model: CredentialDialogModel) {
+      this.credentialsDialog = false;
+      this.sendToApi(model);
+    },
 
+    sendToApi(model: CredentialDialogModel) {
+      this.sentToApi = true;
       let requestPayload = new SendEmailPayloadModel(
         this.receivers,
         btoa(this.templateContent),
-        "test subject"
+        model.subject,
+        model.credential,
+        model.from
       );
 
       http
@@ -68,12 +84,12 @@ export default defineComponent({
 
   computed: {
     isSendButtonDisable(): boolean {
-      return this.templateContent ===  "" || this.receivers.length === 0;
+      return this.templateContent === "" || this.receivers.length === 0;
     },
 
     receivers(): Array<ReceiverModel> {
       return store.getters.getReceivers;
-    }, 
+    },
 
     templateContent(): string {
       return store.getters.getTemplateContent;
